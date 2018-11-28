@@ -1,0 +1,11 @@
+version: '3'
+redis:
+    image: redis:latest
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    networks:
+      - redis-net
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<title>Shortening URL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+
+<div class="w3-bar w3-xlarge w3-blue">
+    <a href="#" class="w3-bar-item w3-button"><i class="fa fa-home"></i></a>
+    <span class="w3-bar-item">Shortening URL Service</span>
+    <button onclick="submitSearch(), document.getElementById('consultLinks').style.display='block'"
+            class="w3-bar-item w3-button w3-right" href="#"><i class="fa fa-search"></i></button>
+</div>
+
+<div class="w3-bar w3-blue">
+    <button onclick="document.getElementById('createUrl').style.display='block'"
+            class="w3-bar-item w3-button w3-hover-white">Create URL
+    </button>
+    <button onclick="document.getElementById('routeMyUrl').style.display='block'"
+            class="w3-bar-item w3-button w3-hover-white">Router My URL
+    </button>
+</div>
+
+<div id="consultLinks" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container w3-blue w3-center w3-padding-32">
+            <span onclick="document.getElementById('consultLinks').style.display='none', submitSearch()"
+                  class="w3-button w3-xlarge w3-display-topright w3-blue">X</span>
+            <h2 class="w3-wide"><i class="fa fa-link w3-margin-right"></i>Links</h2>
+        </header>
+        <div class="w3-container" style="padding: 1px">
+
+            <table class="w3-table w3-bordered w3-striped w3-hoverable">
+                <tbody>
+                <tr class="w3-blue">
+                    <th>Short URL</th>
+                    <th>Target URL</th>
+                    <th>Del</th>
+                </tr>
+                </tbody>
+                <tbody id="tableContent">
+
+                </tbody>
+            </table>
+            <button class="w3-button w3-red w3-section"
+                    onclick="document.getElementById('consultLinks').style.display='none'">Close <i
+                    class="fa fa-remove"></i></button>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="createUrl" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container w3-blue w3-center w3-padding-32">
+            <span onclick="document.getElementById('createUrl').style.display='none'"
+                  class="w3-button w3-xlarge w3-display-topright w3-blue">X</span>
+            <h2 class="w3-wide"><i class="fa fa-link w3-margin-right"></i>Rebrand new link</h2>
+        </header>
+            <div class="w3-container">
+                <p><label><i class="fa fa-link"></i> Enter Link </label></p>
+                <input class="w3-input" type="text" placeholder="Enter link" name="Link" id="createLink">
+
+                <p><label id="lNewLink"><i class="fa fa-link"></i> New Link: </label></p>
+
+                <button class="w3-button w3-block w3-blue w3-padding-16 w3-section w3-right" type="submit" onclick="submitCreateNew()">Submit
+                    <i class="fa fa-check"></i></button>
+                <button class="w3-button w3-red w3-section"
+                        onclick="document.getElementById('createUrl').style.display='none'">Close <i
+                        class="fa fa-remove"></i></button>
+            </div>
+    </div>
+</div>
+
+<div id="routeMyUrl" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container w3-blue w3-center w3-padding-32">
+            <span onclick="document.getElementById('routeMyUrl').style.display='none'"
+                  class="w3-button w3-xlarge w3-display-topright w3-blue">X</span>
+            <h2 class="w3-wide"><i class="fa fa-link w3-margin-right"></i>Rebrand new link</h2>
+        </header>
+            <div class="w3-container">
+                <p><label><i class="fa fa-link"></i> Enter Link </label></p>
+                <input class="w3-input" type="text" placeholder="Enter link" name="Target Link" id="longLinkToSpecifiedLink">
+
+                <p><label>Route To </label></p>
+                <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+                    <div class="w3-half " style="width: 200px">
+                        <label class="w3-bottomright" id="lHostTarget"><i class="fa fa-link"></i></label>
+                    </div>
+                    <div class="w3-half">
+                        <input class="w3-input" style="padding: 1px" type="text" placeholder="Enter with short link" name="Short Link" id="shortLinkToSpecifiedLink">
+                    </div>
+                </div>
+
+                <p><label id="lNewLinkToSpecified"><i class="fa fa-link"></i> New Link: </label></p>
+                <button class="w3-button w3-block w3-blue w3-padding-16 w3-section w3-right" type="submit" onclick="submitCreateNewToSpecified()">Submit
+                    <i class="fa fa-check"></i></button>
+                <button class="w3-button w3-red w3-section"
+                        onclick="document.getElementById('routeMyUrl').style.display='none'">Close <i
+                        class="fa fa-remove"></i></button>
+            </div>
+    </div>
+</div>
+
+<script>
+
+    var appServer = 'localhost';
+    var appPort = '8080';
+
+    document.getElementById('lHostTarget').innerHTML='http://'+ appServer + ':' + appPort + '/';
+
+    function submitSearch() {
+        var tableContent = document.getElementById('tableContent');
+        tableContent.innerHTML = "";
+        var http = new XMLHttpRequest();
+        http.open('GET', '/urls', true);
+        http.onload = function () {
+            var data = JSON.parse(this.response);
+            data.forEach(urls => {
+                var trContent = document.createElement('tr');
+                var tdShortUrl = document.createElement('td');
+
+                var ancor = document.createElement('a');
+                ancor.href = urls.targetUrl;
+                ancor.innerHTML = urls.shortUrl;
+                ancor.target='_blank';
+                tdShortUrl.appendChild(ancor);
+
+                var tdTargetUrl = document.createElement('td');
+                tdTargetUrl.textContent = urls.targetUrl;
+
+                var tdRemove = document.createElement('td');
+                var ancorRemove = document.createElement('a');
+                ancorRemove.href = 'http://' + appServer + ':' + appPort + '/del/' + urls.shortUrl;
+                ancorRemove.setAttribute('class', 'w3-large fa fa-trash');
+                ancorRemove.target = '_blank';
+                ancorRemove.onclick=function () {
+                    document.getElementById('consultLinks').style.display='none';
+                };
+
+                tdRemove.appendChild(ancorRemove);
+
+                trContent.appendChild(tdShortUrl);
+                trContent.appendChild(tdTargetUrl);
+                trContent.appendChild(tdRemove);
+                tableContent.appendChild(trContent);
+            });
+        };
+        http.send();
+    }
+
+    function submitCreateNew() {
+        var http = new XMLHttpRequest();
+        http.open('POST', '/converturl', false);
+        http.setRequestHeader("Content-Type", "application/json");
+
+        var requestBody = '{\"targetUrl\":\"'
+            + document.getElementById('createLink').value
+            + '\"}'
+
+        http.send(requestBody);
+
+        var data = JSON.parse(http.response);
+        var label = document.getElementById('lNewLink');
+
+        var ancor = document.getElementById('aNewLink');
+        if(!ancor) {
+            ancor = document.createElement('a');
+            ancor.id = 'aNewLink'
+        }
+        ancor.href = data.targetUrl;
+        ancor.innerHTML = data.shortUrl;
+        ancor.target = '_blank';
+        label.appendChild(ancor);
+        label.innerHTML;
+
+    }
+
+    function submitCreateNewToSpecified() {
+        var http = new XMLHttpRequest();
+        http.open('POST', '/routerurl', false);
+        http.setRequestHeader("Content-Type", "application/json");
+
+        var requestBody = '{\"targetUrl\":\"'
+            + document.getElementById('longLinkToSpecifiedLink').value
+            + '\", \"shortUrl\":\"'
+            + document.getElementById('shortLinkToSpecifiedLink').value + '\"}'
+
+        http.send(requestBody);
+
+        var data = JSON.parse(http.response);
+        var label = document.getElementById('lNewLinkToSpecified');
+        var ancor = document.createElement('a');
+        ancor.href = data.targetUrl;
+        ancor.innerHTML = data.shortUrl;
+        ancor.target = '_blank';
+        label.appendChild(ancor);
+        label.innerHTML;
+    }
+
+
+</script>
+
+</body>
+</html>
