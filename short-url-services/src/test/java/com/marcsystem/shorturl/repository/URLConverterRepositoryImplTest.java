@@ -50,8 +50,6 @@ public class URLConverterRepositoryImplTest {
         configureMap(key);
 
         Urls foundUrls = urlConverterRepository.findByKey(key);
-
-        assertThat(foundUrls.getId(), equalTo(URLConverter.decode(key)));
         assertThat(foundUrls.getShortUrl(), equalTo(key));
         assertThat(foundUrls.getTargetUrl(), equalTo("http://myurl.com"));
     }
@@ -66,14 +64,12 @@ public class URLConverterRepositoryImplTest {
         List<Urls> foundUrls = urlConverterRepository.findAll();
 
         assertThat(foundUrls.size(), equalTo(1));
-        assertThat(foundUrls.get(0).getId(), equalTo(URLConverter.decode(key)));
         assertThat(foundUrls.get(0).getShortUrl(), equalTo(key));
         assertThat(foundUrls.get(0).getTargetUrl(), equalTo("http://myurl.com"));
     }
 
     private Map<String, String> configureMap(String key) {
         Map<String, String> values = new HashMap<>();
-        values.put("id", "" + URLConverter.decode(key));
         values.put("shortUrl", key);
         values.put("targetUrl", "http://myurl.com");
         when(commands.hgetall(any())).thenReturn(values);
@@ -91,7 +87,7 @@ public class URLConverterRepositoryImplTest {
     @Test
     public void createNewInstance() throws Exception {
         String key = "AAA";
-        Urls urls = new Urls(URLConverter.decode(key), key, "http://myurl.com", LocalDate.now());
+        Urls urls = new Urls(key, "http://myurl.com", LocalDate.now(), 1L);
         urlConverterRepository.insert(urls);
 
         verify(commands, atLeastOnce()).hmset(any(), any());
