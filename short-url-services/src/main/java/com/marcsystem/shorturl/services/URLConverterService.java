@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface URLConverterService {
 
-    Urls insert(Urls urls);
+    Urls insertNew(Urls urls);
+
+    Urls insertToSpecified(Urls urls);
 
     Urls findByKey(String key);
 

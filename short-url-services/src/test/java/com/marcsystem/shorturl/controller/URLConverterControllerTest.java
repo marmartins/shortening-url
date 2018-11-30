@@ -38,7 +38,7 @@ public class URLConverterControllerTest {
     @Test
     public void convertUrl() throws Exception {
         Urls newURL = createNewURL(1);
-        when(urlConverterService.insert(any())).thenReturn(newURL);
+        when(urlConverterService.insertNew(any())).thenReturn(newURL);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/converturl")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"targetUrl\":\"http://www.targeturl.com/1\"}")
@@ -51,7 +51,7 @@ public class URLConverterControllerTest {
     @Test
     public void invalidConvertUrl() throws Exception {
         Urls newURL = createNewURL(1);
-        when(urlConverterService.insert(any())).thenReturn(newURL);
+        when(urlConverterService.insertNew(any())).thenReturn(newURL);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/converturl")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"targetUrl\":\"invalid/1\"}")
@@ -62,7 +62,7 @@ public class URLConverterControllerTest {
     @Test
     public void routerToSpecifiedUrl() throws Exception {
         Urls newURL = createNewURL(1);
-        when(urlConverterService.insert(any())).thenReturn(newURL);
+        when(urlConverterService.insertToSpecified(any())).thenReturn(newURL);
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/routerurl")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"shortUrl\":\"AABB\", \"targetUrl\":\"http://www.targeturl.com/1\"}")
@@ -90,7 +90,6 @@ public class URLConverterControllerTest {
 
     private Urls createNewURL(Integer id) {
         Urls urls = new Urls();
-        urls.setId(id);
         urls.setShortUrl("ShortURL_" + id);
         urls.setTargetUrl("http://www.targeturl.com/" + id);
         return urls;

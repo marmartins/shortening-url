@@ -14,7 +14,6 @@ public class URLConverterRepositoryImpl extends BaseRepository<Urls> implements 
     @Override
     public Urls findByKey(String key) {
         Urls urlsTemplate = new Urls();
-        urlsTemplate.setId(URLConverter.decode(key));
         urlsTemplate.setShortUrl(key);
         updateIndexes(urlsTemplate);
 
@@ -29,8 +28,8 @@ public class URLConverterRepositoryImpl extends BaseRepository<Urls> implements 
     @Override
     public void remove(String key) {
         Urls urlsTemplate = new Urls();
-        urlsTemplate.setId(URLConverter.decode(key));
-        log.info("Removing URL form ID: {}", urlsTemplate.getId());
+        urlsTemplate.setShortUrl(key);
+        log.info("Removing URL form ID: {}", key);
         super.remove(extractRedisKey(urlsTemplate, false).getRedisKey());
     }
 

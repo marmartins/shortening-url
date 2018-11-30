@@ -18,9 +18,6 @@ import java.time.LocalDate;
 public class Urls implements RedisDTO{
 
     @RedisKey
-    @JsonIgnore
-    private Integer id;
-
     @RedisIndex
     private String shortUrl;
 
@@ -29,5 +26,8 @@ public class Urls implements RedisDTO{
     @JsonIgnore
     @RedisIndex(name="date")
     private LocalDate createDate;
+
+    @JsonIgnore
+    private Long expiredTime;
 
 }
